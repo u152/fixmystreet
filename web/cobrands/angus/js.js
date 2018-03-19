@@ -8,7 +8,7 @@ fixmystreet.assets.add({
     wfs_url: "https://data.angus.gov.uk/geoserver/services/wfs",
     wfs_feature: "lighting_column_v",
     wfs_fault_feature: "lighting_faults_v",
-    asset_category: "Street lighting",
+    asset_category: [ "Street lighting" ],
     asset_item: 'street light',
     asset_type: 'spot',
     max_resolution: 2.388657133579254,
