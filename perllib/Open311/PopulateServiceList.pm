@@ -256,9 +256,15 @@ sub _add_meta_to_contact {
             public_anonymity_required
             email_alerts_requested
         ) ],
-        #2243, 
+        #2243,
         'Warwickshire County Council' => [qw(
             closest_address
+        ) ],
+        #2551
+        'Bath and North East Somerset Council' => [qw(
+            report_url
+            title
+            description
         ) ],
     );
 
@@ -298,10 +304,11 @@ sub _delete_contacts_not_in_service_list {
         }
     );
 
-    # for Warwickshire/Bristol, which are mixed Open311 and email, don't delete
+    # for Warwickshire/Bristol/BANES, which are mixed Open311 and email, don't delete
     # the email addresses
     if ($self->_current_body->name eq 'Warwickshire County Council' ||
-        $self->_current_body->name eq 'Bristol City Council') {
+        $self->_current_body->name eq 'Bristol City Council' ||
+        $self->_current_body->name eq 'Bath and North East Somerset Council') {
         $found_contacts = $found_contacts->search(
             {
                 email => { -not_like => '%@%' }
