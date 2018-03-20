@@ -8,7 +8,7 @@ if (!fixmystreet.maps) {
 
 var defaults = {
     http_options: {
-        url: "http://struan.tilma.dev.mysociety.org/mapserver/bromley_wfs",
+        url: "https://struan.tilma.dev.mysociety.org/mapserver/bromley_wfs",
         params: {
             SERVICE: "WFS",
             VERSION: "1.1.0",
