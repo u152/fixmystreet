@@ -669,6 +669,14 @@ $.extend(fixmystreet.set_up, {
     });
   },
 
+  clicking_banner_begins_report: function() {
+    $('.big-green-banner').on('click', function(){
+      if (fixmystreet.map.getCenter) {
+        fixmystreet.display.begin_report( fixmystreet.map.getCenter() );
+      }
+    });
+  },
+
   map_controls: function() {
     //add permalink on desktop, force hide on mobile
     //add links container (if its not there)
@@ -1006,6 +1014,7 @@ fixmystreet.display = {
         document.getElementById('side-form').style.display = 'block';
     }
     $('#side').hide();
+    $('#map_box .big-green-banner').hide();
 
     if (fixmystreet.map.updateSize) {
         fixmystreet.map.updateSize(); // required after changing the size of the map element
@@ -1073,6 +1082,7 @@ fixmystreet.display = {
 
         if ($sideReport.length) {
             $('#side').hide(); // Hide the list of reports
+            $('#map_box .big-green-banner').hide();
             // Remove any existing report page content from sidebar
             $('#side-report').remove();
             $('.two_column_sidebar').remove();
@@ -1165,6 +1175,7 @@ fixmystreet.display = {
             return;
         }
         side.style.display = '';
+        $('#map_box .big-green-banner').show();
         $('#side-form').hide();
         // Report page may have been one or two columns, remove either
         $('#side-report').remove();
