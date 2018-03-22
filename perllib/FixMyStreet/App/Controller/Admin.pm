@@ -1149,8 +1149,8 @@ sub template_edit : Path('templates') : Args(2) {
                     'auto_response' => 1,
                     'contact.id' => [ @check_contact_ids, undef ],
                     -or => {
-                        'me.state' => $template->state,
-                        'me.external_status_code' => $template->external_status_code,
+                        $template->state ? ('me.state' => $template->state) : (),
+                        $template->external_status_code ? ('me.external_status_code' => $template->external_status_code) : (),
                     },
                 };
                 if ($template->in_storage) {
