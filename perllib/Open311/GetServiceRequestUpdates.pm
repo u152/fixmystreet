@@ -110,12 +110,13 @@ sub update_comments {
 
             if ( !$c->first ) {
                 my $state = $open311->map_state( $request->{status} );
+                my $external_status_code = $request->{external_status_code};
                 my $comment = $self->schema->resultset('Comment')->new(
                     {
                         problem => $p,
                         user => $self->system_user,
                         external_id => $request->{update_id},
-                        text => $self->comment_text_for_request($request, $p, $state),
+                        text => $self->comment_text_for_request($request, $p, $state, $external_status_code),
                         mark_fixed => 0,
                         mark_open => 0,
                         anonymous => 0,
@@ -125,6 +126,14 @@ sub update_comments {
                         state => 'confirmed',
                     }
                 );
+
+                # Some Open311 services, e.g. Confirm via open311-adapter, provide
+                # a more fine-grained status code that we use within FMS for
+                # response templates.
+                if ( $external_status_code ) {
+                    $comment->set_extra_metadata(external_status_code =>$external_status_code);
+                    $p->set_extra_metadata(external_status_code =>$external_status_code);
+                }
 
                 $open311->add_media($request->{media_url}, $comment)
                     if $request->{media_url};
@@ -174,13 +183,20 @@ sub update_comments {
 }
 
 sub comment_text_for_request {
-    my ($self, $request, $problem, $state) = @_;
+    my ($self, $request, $problem, $state, $external_status_code) = @_;
 
     return $request->{description} if $request->{description};
 
+    my $state_params = {
+        'me.state' => $state
+    };
+    if ($external_status_code) {
+        $state_params->{'me.external_status_code'} = $external_status_code;
+    };
+
     if (my $template = $problem->response_templates->search({
         auto_response => 1,
-        'me.state' => $state
+        -or => $state_params,
     })->first) {
         return $template->text;
     }
