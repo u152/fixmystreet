@@ -183,13 +183,20 @@ sub update_comments {
 }
 
 sub comment_text_for_request {
-    my ($self, $request, $problem, $state) = @_;
+    my ($self, $request, $problem, $state, $external_status_code) = @_;
 
     return $request->{description} if $request->{description};
 
+    my $state_params = {
+        'me.state' => $state
+    };
+    if ($external_status_code) {
+        $state_params->{'me.external_status_code'} = $external_status_code;
+    };
+
     if (my $template = $problem->response_templates->search({
         auto_response => 1,
-        'me.state' => $state
+        -or => $state_params,
     })->first) {
         return $template->text;
     }
