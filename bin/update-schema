@@ -31,10 +31,15 @@ backup of your database before running.
 use strict;
 use warnings;
 
-# Horrible boilerplate to set up appropriate library paths.
-use FindBin;
-use lib "$FindBin::Bin/../commonlib/perllib";
+my $bin_dir;
+BEGIN {
+    use File::Basename qw(dirname);
+    use File::Spec;
+    $bin_dir = dirname(File::Spec->rel2abs($0));
+    require "$bin_dir/../setenv.pl";
+}
 
+use FindBin;
 use mySociety::Config;
 use mySociety::DBHandle qw(dbh);
 use mySociety::MaPit;
