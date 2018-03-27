@@ -68,6 +68,8 @@ fixmystreet.assets.add($.extend(true, {}, defaults, {
     },
     stylemap: highways_stylemap,
     always_visible: true,
+    asset_category: ["Road defect"],
+    asset_item: 'road',
     non_interactive: true,
 }));
 
