@@ -43,11 +43,21 @@ fixmystreet.assets.add($.extend(true, {}, defaults, {
 fixmystreet.assets.add($.extend(true, {}, defaults, {
     http_options: {
         params: {
-            TYPENAME: "Litter_Bins"
+            TYPENAME: "Bins"
         }
     },
     asset_category: ["Overflowing litter bin"],
-    asset_item: 'litter bin'
+    asset_item: 'bin'
+}));
+
+fixmystreet.assets.add($.extend(true, {}, defaults, {
+    http_options: {
+        params: {
+            TYPENAME: "Street_Trees"
+        }
+    },
+    asset_category: ["Public tree requires pruning"],
+    asset_item: 'tree'
 }));
 
 var highways_stylemap = new OpenLayers.StyleMap({
@@ -98,6 +108,27 @@ fixmystreet.assets.add($.extend(true, {}, defaults, {
     },
     body_found: 'Tfl',
     body_council: 'Bromley Council'
+}));
+
+var prow_stylemap = new OpenLayers.StyleMap({
+    'default': new OpenLayers.Style({
+        fill: false,
+        fillOpacity: 0,
+        strokeColor: "#00FF00",
+        strokeOpacity: 0.5,
+        strokeWidth: 8
+    })
+});
+
+fixmystreet.assets.add($.extend(true, {}, defaults, {
+    http_options: {
+        params: {
+            TYPENAME: "PROW"
+        }
+    },
+    stylemap: prow_stylemap,
+    always_visible: true,
+    non_interactive: true,
 }));
 
 })();
