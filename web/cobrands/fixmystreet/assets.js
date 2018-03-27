@@ -371,6 +371,13 @@ fixmystreet.assets = {
             protocol = new OpenLayers.Protocol.WFS(protocol_options);
         }
         var StrategyClass = options.strategy_class || OpenLayers.Strategy.BBOX;
+
+        // Upgrade `asset_category` to an array, in the case that this layer is
+        // only associated with a single category.
+        if (options.asset_category && !OpenLayers.Util.isArray(options.asset_category)) {
+            options.asset_category = [ options.asset_category ];
+        }
+
         var layer_options = {
             fixmystreet: options,
             strategies: [new StrategyClass()],

@@ -14,6 +14,7 @@
         - Add default placeholder to report extra fields. #2027
         - Clicking the "Click map" instruction banner now begins a new report #2033
         - Homepage postcode input is now marked up as a required input #2037
+        - Improved cursor/display of the new report pin. #2038
     - Bugfixes:
         - Stop asset layers obscuring marker layer. #1999
         - Don't delete hidden field values when inspecting reports. #1999
@@ -21,6 +22,8 @@
         - Fix post-edit issues on admin report edit page.
         - Truncate dates in Open311 output to the second. #2023
         - Fix check for visible sub map links after 'Try again'.
+        - Stop race condition when making a new report quickly.
+        - Set a session timezone in case database server is set differently.
     - Admin improvements:
         - Inspectors can set non_public status of reports. #1992
         - Default start date is shown on the dashboard.
@@ -28,6 +31,8 @@
         - Don't send sent-report emails to as-body/as-anonymous reports.
     - Development improvements:
         - Add HTML email previewer.
+        - Add CORS header to Open311 output. #2022
+        - Add some Cypress browser-based testing.
 
 * v2.3.1 (12th February 2018)
     - Front end improvements:
