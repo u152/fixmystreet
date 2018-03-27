@@ -88,6 +88,12 @@ fixmystreet.assets.add($.extend(true, {}, defaults, {
                 $('#road-warning').remove();
             }
             $('#single_body_only').val(layer.fixmystreet.body_council);
+        },
+
+        unselected: function() {
+            if ( $('#road-warning').length ) {
+                $('#road-warning').remove();
+            }
         }
     },
     body_found: 'Tfl',
