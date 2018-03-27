@@ -71,6 +71,27 @@ fixmystreet.assets.add($.extend(true, {}, defaults, {
     asset_category: ["Road defect"],
     asset_item: 'road',
     non_interactive: true,
+    road: true,
+    actions: {
+        found: function(layer) {
+            var msg = "This road may not be the responsibility of Bromley Borough Council";
+            if ( $('#road-warning').length ) {
+                $('#road-warning').text(msg);
+            } else {
+                $('.change_location').after('<div class="box-warning" id="road-warning">' + msg + '</div>');
+            }
+            $('#single_body_only').val(layer.fixmystreet.body_found);
+        },
+
+        not_found: function(layer) {
+            if ( $('#road-warning').length ) {
+                $('#road-warning').remove();
+            }
+            $('#single_body_only').val(layer.fixmystreet.body_council);
+        }
+    },
+    body_found: 'Tfl',
+    body_council: 'Bromley Council'
 }));
 
 })();
