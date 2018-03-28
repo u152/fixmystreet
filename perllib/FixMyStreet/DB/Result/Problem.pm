@@ -669,9 +669,8 @@ sub body {
             }
         } values %$bodies;
         if ( scalar @body_names > 2 ) {
-            my $l = scalar @body_names;
-            $body = join( _(', ', ), @body_names[0..$l-2]);
-            $body = join( _(', and '), ($body, $body_names[$l-1]));
+            $body = join( ', ', splice @body_names, 0, -1);
+            $body = join( ',' . _(' and '), ($body, $body_names[-1]));
         } else {
             $body = join( _(' and '), @body_names);
         }
