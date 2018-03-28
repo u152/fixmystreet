@@ -397,3 +397,11 @@ footer {
         margin-bottom: 4em;
     }
 }
+
+.area-reports-dashboard-cta {
+    // To overpower `body.mappage .full-width` in core.
+    body.mappage & {
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+}

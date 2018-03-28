@@ -494,3 +494,14 @@ input.postcode-form-test__postcode {
         line-height: 1em;
     }
 }
+
+.area-reports-dashboard-cta {
+    background-color: mix(#fff, $primary, 60%);
+    padding: 1em;
+    margin-top: 1em;
+    margin-bottom: 1em;
+
+    & > :last-child {
+        margin-bottom: 0;
+    }
+}
