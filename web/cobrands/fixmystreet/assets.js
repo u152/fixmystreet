@@ -116,7 +116,7 @@ fixmystreet.roads = {
         if (layer && layer.fixmystreet.actions) {
             layer.fixmystreet.actions.not_found(layer);
         } else {
-            if ( fixmystreet.roads.last_road.fixmystreet.actions.unselected ) {
+            if ( fixmystreet.roads.last_road && fixmystreet.roads.last_road.fixmystreet.actions.unselected ) {
                 fixmystreet.roads.last_road.fixmystreet.actions.unselected();
                 fixmystreet.roads.last_road = null;
             }
