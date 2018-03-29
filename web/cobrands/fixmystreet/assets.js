@@ -52,6 +52,12 @@ fixmystreet.roads = {
     last_road: null,
 
     change_category: function() {
+        if (!fixmystreet.map) {
+            // Sometimes the category change event is fired before the map has
+            // initialised, for example when visiting /report/new directly
+            // on a cobrand with category groups enabled.
+            return;
+        }
         var lonlat = new OpenLayers.LonLat(
             $('input[name="longitude"]').val(),
             $('input[name="latitude"]').val()
