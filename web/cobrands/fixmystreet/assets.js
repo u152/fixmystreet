@@ -46,6 +46,93 @@ $(fixmystreet).on('report_new:category_change:extras_received', fixmystreet.usrn
 
 (function(){
 
+var selected_road = null;
+
+fixmystreet.roads = {
+    last_road: null,
+
+    change_category: function() {
+        if (!fixmystreet.map) {
+            // Sometimes the category change event is fired before the map has
+            // initialised, for example when visiting /report/new directly
+            // on a cobrand with category groups enabled.
+            return;
+        }
+        var lonlat = new OpenLayers.LonLat(
+            $('input[name="longitude"]').val(),
+            $('input[name="latitude"]').val()
+        );
+        var transformedLonlat = lonlat.clone().transform(
+            new OpenLayers.Projection("EPSG:4326"),
+            fixmystreet.map.getProjectionObject()
+        );
+        fixmystreet.roads.check_for_road(transformedLonlat);
+    },
+
+    select: function(evt, lonlat) {
+        fixmystreet.roads.check_for_road(lonlat);
+    },
+
+    check_for_road: function(lonlat) {
+        var road_providers = fixmystreet.map.getLayersBy('fixmystreet', {
+            test: function(options) {
+                return options && options.road && options.asset_category.indexOf($('select#form_category').val()) != -1;
+            }
+        });
+        if (road_providers.length) {
+            var road_layer = road_providers[0];
+            fixmystreet.roads.last_road = road_layer;
+            var point = new OpenLayers.Geometry.Point(lonlat.lon, lonlat.lat);
+            var feature = road_layer.getFeatureAtPoint(point);
+            if (feature == null) {
+                // The click wasn't directly over a road, try and find one
+                // nearby
+                feature = road_layer.getNearestFeature(point, 10);
+            }
+            if (feature !== null) {
+                selected_road = feature; //.attributes[road_layer.fixmystreet.road.attribute];
+            } else {
+                selected_road = null;
+            }
+            if (selected_road) {
+                fixmystreet.roads.found(road_layer, selected_road);
+            } else {
+                fixmystreet.roads.not_found(road_layer);
+            }
+        } else {
+            fixmystreet.roads.not_found();
+        }
+    },
+
+    found: function(layer, feature) {
+        if (layer.fixmystreet.actions) {
+            layer.fixmystreet.actions.found(layer, feature);
+        } else {
+            $('#single_body_only').val(layer.fixmystreet.body);
+        }
+    },
+
+    not_found: function(layer) {
+        if (layer && layer.fixmystreet.actions) {
+            layer.fixmystreet.actions.not_found(layer);
+        } else {
+            if ( fixmystreet.roads.last_road && fixmystreet.roads.last_road.fixmystreet.actions.unselected ) {
+                fixmystreet.roads.last_road.fixmystreet.actions.unselected();
+                fixmystreet.roads.last_road = null;
+            }
+            $('#single_body_only').val('');
+        }
+    },
+};
+
+$(fixmystreet).on('maps:update_pin', fixmystreet.roads.select);
+$(fixmystreet).on('assets:selected', fixmystreet.roads.select);
+$(fixmystreet).on('report_new:category_change', fixmystreet.roads.change_category);
+
+})();
+
+(function(){
+
 var selected_feature = null;
 var fault_popup = null;
 
@@ -394,11 +481,21 @@ fixmystreet.assets = {
             layer_options.projection = new OpenLayers.Projection(fixmystreet.wmts_config.map_projection);
         }
         if (options.filter_key) {
-            layer_options.filter = new OpenLayers.Filter.Comparison({
-                type: OpenLayers.Filter.Comparison.EQUAL_TO,
-                property: options.filter_key,
-                value: options.filter_value
-            });
+            if (OpenLayers.Util.isArray(options.filter_value)) {
+                layer_options.filter = new OpenLayers.Filter.FeatureId({
+                    type: OpenLayers.Filter.Function,
+                    evaluate: function(f) {
+                        return options.filter_value.indexOf(f.attributes[options.filter_key]) != -1;
+                    }
+                });
+            } else {
+                layer_options.filter = new OpenLayers.Filter.Comparison({
+                    type: OpenLayers.Filter.Comparison.EQUAL_TO,
+                    property: options.filter_key,
+                    value: options.filter_value
+                });
+            }
+            layer_options.strategies.push(new OpenLayers.Strategy.Filter({filter: layer_options.filter}));
         }
 
         var asset_layer = new OpenLayers.Layer.Vector(options.name || "WFS", layer_options);
@@ -578,4 +675,14 @@ OpenLayers.Format.GML.v3.MultiCurveFix = OpenLayers.Class(OpenLayers.Format.GML.
     CLASS_NAME: "OpenLayers.Format.GML.v3.MultiCurveFix"
 });
 
+OpenLayers.Request.XMLHttpRequest.prototype.setRequestHeader = function(sName, sValue) {
+    if (sName.toLowerCase() == 'x-requested-with') {
+        return;
+    }
+    if (!this._headers) {
+        this._headers = {};
+    }
+    this._headers[sName] = sValue;
+    return this._object.setRequestHeader(sName, sValue);
+};
 })();
