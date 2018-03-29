@@ -153,6 +153,7 @@ fixmystreet.roadworks.layer_future = $.extend(true, {}, roadworks_defaults, {
 // fixmystreet.map.layers[5].getNearestFeature(new OpenLayers.Geometry.Point(-0.835614, 51.816562).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:3857")), 10)
 
 fixmystreet.roadworks.show_nearby = function(evt, lonlat) {
+    $(".js-roadworks-message").remove();
     var providers = fixmystreet.map.getLayersBy('fixmystreet', {
         test: function(options) {
             return options && options.format_class == OpenLayers.Format.RoadworksForwardPlanning;
@@ -172,7 +173,7 @@ fixmystreet.roadworks.show_nearby = function(evt, lonlat) {
                 start = attr.start.replace(/{ts '([^ ]*).*/, '$1'),
                 end = attr.end.replace(/{ts '([^ ]*).*/, '$1'),
                 tooltip = attr.tooltip.replace(/\\n/g, '\n');
-            $('.change_location').after('<div class="box-warning">Roadworks are scheduled near this location from ' + start + ' to ' + end + ', so you may not need to report your issue: “' + tooltip + '”</div>');
+            $('.change_location').after('<div class="js-roadworks-message box-warning">Roadworks are scheduled near this location from ' + start + ' to ' + end + ', so you may not need to report your issue: “' + tooltip + '”</div>');
             return true;
         }
     }
