@@ -307,21 +307,32 @@ html.lazyload .js-lazyload {
 }
 
 .fms-pro-promo {
-  margin: 2em -1em;
-  padding: 1em;
-  background: $primary;
+    margin: 0 -1em;
 
-  .lead {
-    font-weight: bold;
-  }
+    h2 {
+        margin-top: 0;
+    }
 
-  & > :first-child {
-    margin-top: 0;
-  }
+    .lead {
+        font-weight: bold;
+    }
 
-  & > :last-child {
-    margin-bottom: 0;
-  }
+    p:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.fms-pro-promo__pro,
+.fms-pro-promo__stats {
+    padding: 1.5em 1em;
+}
+
+.fms-pro-promo__pro {
+    background: $primary;
+}
+
+.fms-pro-promo__stats {
+    border-bottom: 0.25em solid $primary;
 }
 
 .postcode-form-test {
