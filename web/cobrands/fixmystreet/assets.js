@@ -488,6 +488,7 @@ fixmystreet.assets = {
                         return options.filter_value.indexOf(f.attributes[options.filter_key]) != -1;
                     }
                 });
+                layer_options.strategies.push(new OpenLayers.Strategy.Filter({filter: layer_options.filter}));
             } else {
                 layer_options.filter = new OpenLayers.Filter.Comparison({
                     type: OpenLayers.Filter.Comparison.EQUAL_TO,
@@ -495,7 +496,6 @@ fixmystreet.assets = {
                     value: options.filter_value
                 });
             }
-            layer_options.strategies.push(new OpenLayers.Strategy.Filter({filter: layer_options.filter}));
         }
 
         var asset_layer = new OpenLayers.Layer.Vector(options.name || "WFS", layer_options);
