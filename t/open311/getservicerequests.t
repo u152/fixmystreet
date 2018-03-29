@@ -6,6 +6,7 @@ use_ok( 'Open311' );
 use_ok( 'Open311::GetServiceRequests' );
 use DateTime;
 use DateTime::Format::W3CDTF;
+use Test::MockObject::Extends;
 
 my $mech = FixMyStreet::TestMech->new;
 
@@ -151,7 +152,6 @@ for my $test (
         };
         my $after_count = FixMyStreet::DB->resultset('Problem')->count;
 
-        warn $count;
         is $count, $after_count, "problems not created";
 
         my $with_text = FixMyStreet::DB->resultset('Problem')->search( {
@@ -257,6 +257,74 @@ for my $test (
         is $count, $after, 'problem not added';
     };
 }
+
+for my $test (
+  {
+      desc => 'convert easting/northing to lat/long',
+      subs => { lat => 168935, long => 540315 },
+      expected => { lat => 51.402096, long => 0.015784 },
+  },
+) {
+    subtest $test->{desc} => sub {
+        my $xml = prepare_xml( $test->{subs} );
+        my $o = Open311->new(
+            jurisdiction => 'mysociety',
+            endpoint => 'http://example.com',
+            test_mode => 1,
+            test_get_returns => { 'requests.xml' => $xml}
+        );
+
+        my $update = Open311::GetServiceRequests->new(
+            system_user => $user,
+            convert_latlong => 1,
+        );
+
+        FixMyStreet::override_config {
+            MAPIT_URL => 'http://mapit.uk/',
+        }, sub {
+            $update->create_problems( $o, $body );
+        };
+
+        my $p = FixMyStreet::DB->resultset('Problem')->search(
+            { external_id => 123456 }
+        )->first;
+
+        ok $p, 'problem created';
+        is $p->latitude, $test->{expected}->{lat}, 'correct latitude';
+        is $p->longitude, $test->{expected}->{long}, 'correct longitude';
+
+        $p->delete;
+    };
+}
+
+subtest "check options passed through from body" => sub {
+    my $xml = prepare_xml( {} );
+
+    $body->update( {
+        send_method => 'Open311',
+        fetch_problems => 1,
+        comment_user_id => $user->id,
+        endpoint => 'http://open311.localhost/',
+        convert_latlong => 1,
+        api_key => 'KEY',
+        jurisdiction => 'test',
+    } );
+
+    my $o = Open311::GetServiceRequests->new();
+
+    my $props = {};
+
+    $o = Test::MockObject::Extends->new($o);
+    $o->mock('create_problems', sub {
+        my $self = shift;
+
+        $props->{convert_latlong} = $self->convert_latlong;
+    } );
+
+    $o->fetch();
+
+    ok $props->{convert_latlong}, "convert latlong set"
+};
 
 sub prepare_xml {
     my $replacements = shift;
