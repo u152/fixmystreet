@@ -260,12 +260,6 @@ sub _add_meta_to_contact {
         'Warwickshire County Council' => [qw(
             closest_address
         ) ],
-        #2217
-        'Buckinghamshire County Council' => [qw(
-            report_url
-            title
-            description
-        ) ],
     );
 
     if (my $override = $override{ $self->_current_body->name }) {
