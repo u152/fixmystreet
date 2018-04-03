@@ -59,9 +59,9 @@ IF bodyclass.match('mappage');
         version('/vendor/fancybox/jquery.fancybox-1.3.4.pack.js'),
         version('/cobrands/fixmystreet/assets.js'),
     );
-    FOR cobrand IN c.config.COBRAND_ASSETS;
-        script = '/cobrands/' _ cobrand _ '/assets.js';
-        scripts.push(version(script));
+    TRY;
+        PROCESS 'asset_scripts.html';
+    CATCH file;
     END;
 ELSE;
     scripts.push(
