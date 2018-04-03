@@ -68,15 +68,7 @@ sub map_type { 'Buckinghamshire' }
 
 sub default_map_zoom { 3 }
 
-sub category_extra_hidden {
-    my ($self, $meta) = @_;
-    $meta = $meta->{code};
-    return 1 if $meta eq 'asset_details' || $meta eq 'site_code' || $meta eq 'central_asset_id';
-    return 0;
-}
-
 sub enable_category_groups { 1 }
-
 
 # Enable adding/editing of parish councils in the admin
 sub add_extra_areas {
@@ -295,5 +287,12 @@ sub is_council_with_case_management { 1 }
 
 # Try OSM for Bucks as it provides better disamiguation descriptions.
 sub get_geocoder { 'OSM' }
+
+sub categories_restriction {
+    my ($self, $rs) = @_;
+    # Buckinghamshire is a two-tier council, but only want to display
+    # county-level categories on their cobrand.
+    return $rs->search( { 'body.id' => 2217 } );
+}
 
 1;
