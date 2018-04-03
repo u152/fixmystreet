@@ -266,12 +266,6 @@ sub _add_meta_to_contact {
             title
             description
         ) ],
-        #2217
-        'Buckinghamshire County Council' => [qw(
-            report_url
-            title
-            description
-        ) ],
     );
 
     if (my $override = $override{ $self->_current_body->name }) {
